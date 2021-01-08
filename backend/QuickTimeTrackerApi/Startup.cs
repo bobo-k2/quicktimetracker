@@ -17,6 +17,8 @@ namespace QuickTimeTrackerApi
 {
     public class Startup
     {
+        private const string MyAllowSpecificOrigins = "QTTAllowOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,6 +30,17 @@ namespace QuickTimeTrackerApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TrackerContext>(x => x.UseInMemoryDatabase("QuickTimeTracker"));
+
+            services.AddCors(options => 
+            {
+                options.AddPolicy(
+                    name: MyAllowSpecificOrigins, 
+                    builder => 
+                    {
+                        builder.WithOrigins("http://localhost:3000");
+                    }
+                );
+            });
 
             services.AddControllers();
 
@@ -61,6 +74,8 @@ namespace QuickTimeTrackerApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 

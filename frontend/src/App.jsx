@@ -1,9 +1,12 @@
 import React from 'react';
 import Tasks from './components/tasks';
+import ErrorBoundary from './util/error-boundary';
 
 function App() {
   return (
-    <Tasks />
+    <ErrorBoundary>
+      <Tasks />
+    </ErrorBoundary>
   );
 }
 

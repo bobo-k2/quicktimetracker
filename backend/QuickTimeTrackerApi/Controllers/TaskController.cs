@@ -1,12 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuickTimeTrackerApi.Models;
 
 namespace QuickTimeTrackerApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Tasks")]
     public class TaskController : ControllerBase
     {
         private readonly TrackerContext dataContext;
@@ -14,6 +16,12 @@ namespace QuickTimeTrackerApi.Controllers
         public TaskController(TrackerContext dataContext)
         {
             this.dataContext = dataContext;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Models.Task>>> Get()
+        {
+            return await this.dataContext.Tasks.ToListAsync();
         }
 
         [HttpGet("{id}")]
