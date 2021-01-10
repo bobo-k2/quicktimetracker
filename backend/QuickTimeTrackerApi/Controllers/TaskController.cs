@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,10 @@ namespace QuickTimeTrackerApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Models.Task>>> Get()
         {
-            return await this.dataContext.Tasks.ToListAsync();
+            return await this.dataContext
+                .Tasks
+                .OrderByDescending(x => x.Priority)
+                .ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -63,6 +67,44 @@ namespace QuickTimeTrackerApi.Controllers
             await this.dataContext.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPut("start/{id}")]
+        public async Task<ActionResult<Models.Task>> Start(long id)
+        {
+            var task = await this.dataContext.Tasks.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!task.StartedAt.HasValue)
+            {
+                task.StartedAt = DateTime.UtcNow;
+                this.dataContext.SaveChanges();
+            }
+
+            return task;
+        }
+
+        [HttpPut("record/{id}")]
+        public async Task<ActionResult<Models.Task>> RecordTime(long id)
+        {
+            var task = await this.dataContext.Tasks.FindAsync(id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!task.FinishedAt.HasValue)
+            {
+                task.TimeSpent += 1;
+                this.dataContext.SaveChanges();
+            }
+
+            return task;
         }
     }
 }

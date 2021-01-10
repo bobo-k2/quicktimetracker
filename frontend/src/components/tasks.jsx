@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { getTasks } from '../util/api';
+import PropTypes from 'prop-types';
+import { startTask, getTasks } from '../util/api';
+import { getTasks as getTasksFromStore } from '../redux/selectors';
 import TaskItem from './task-item';
 import { taskBorder } from '../util/colors';
+import { ADD_TASKS } from '../redux/actionTypes';
+import store from '../redux/store';
 
 const Wrapper = styled.div`
   margin: 50px;
@@ -24,15 +29,22 @@ const AddButton = styled.h1`
   text-align: center;
 `;
 
-const Tasks = () => {
-  const [userTasks, setUserTasks] = useState([]);
+const Tasks = ({ tasks }) => {
+  // const [userTasks, setUserTasks] = useState([]);
 
   useEffect(() => {
-    getTasks().then((response) => setUserTasks(response.data));
-  });
+    getTasks().then((response) => {
+      // setUserTasks(response.data);
+      store.dispatch({ type: ADD_TASKS, payload: response.data });
+    });
+  }, []);
 
   const addTask = () => {
     throw new Error('Not implemented');
+  };
+
+  const handleTaskStart = (taskId) => {
+    startTask(taskId);
   };
 
   return (
@@ -41,11 +53,25 @@ const Tasks = () => {
         <h1>Tasks</h1>
         <AddButton onClick={addTask}>+</AddButton>
       </Header>
-      {userTasks.map((task) => (
-        <TaskItem task={task} key={task.id} />
+      {tasks && tasks.map((task) => (
+        <TaskItem
+          task={task}
+          key={task.id}
+          onStart={handleTaskStart}
+        />
       ))}
     </Wrapper>
   );
 };
 
-export default Tasks;
+const mapStateToProps = (state) => {
+  const tasks = getTasksFromStore(state);
+  return { tasks };
+};
+
+Tasks.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  tasks: PropTypes.array.isRequired,
+};
+
+export default connect(mapStateToProps)(Tasks);

@@ -18,4 +18,6 @@ const getClient = () => {
 
 export const getTasks = (params) => getClient().get('/tasks', params);
 
+export const startTask = (taskId) => getClient().put(`/tasks/start/${taskId}`);
+
 export const addTask = (task) => task;
