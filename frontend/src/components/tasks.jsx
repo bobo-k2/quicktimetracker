@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { startTask, getTasks } from '../util/api';
 import { getTasks as getTasksFromStore } from '../redux/selectors';
-import TaskItem from './task-item';
+import TaskItem, { taskShape } from './task-item';
 import { taskBorder } from '../util/colors';
-import { ADD_TASKS } from '../redux/actionTypes';
+import { ADD_TASKS, START_TASK } from '../redux/actionTypes';
 import store from '../redux/store';
 
 const Wrapper = styled.div`
@@ -34,7 +34,6 @@ const Tasks = ({ tasks }) => {
 
   useEffect(() => {
     getTasks().then((response) => {
-      // setUserTasks(response.data);
       store.dispatch({ type: ADD_TASKS, payload: response.data });
     });
   }, []);
@@ -44,7 +43,9 @@ const Tasks = ({ tasks }) => {
   };
 
   const handleTaskStart = (taskId) => {
-    startTask(taskId);
+    startTask(taskId).then((response) => {
+      store.dispatch({ type: START_TASK, payload: response.data });
+    });
   };
 
   return (
@@ -70,8 +71,7 @@ const mapStateToProps = (state) => {
 };
 
 Tasks.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  tasks: PropTypes.array.isRequired,
+  tasks: PropTypes.arrayOf(taskShape).isRequired,
 };
 
 export default connect(mapStateToProps)(Tasks);

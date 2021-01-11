@@ -29,6 +29,7 @@ const Task = ({
       <ValueDisplay labelText="name" value={task.name} />
       <ValueDisplay labelText="description" value={task.description} />
       <ValueDisplay labelText="expected duration" value={task.expectedDuration} valueAlignment="right" />
+      <ValueDisplay labelText="time spent (min)" value={task.timeSpent} valueAlignment="right" />
       <Player
         canStart={!task.isRunning}
         canPause={task.isRunning}
@@ -39,15 +40,18 @@ const Task = ({
   );
 };
 
+export const taskShape = PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  expectedDuration: PropTypes.number,
+  timeSpent: PropTypes.number,
+  isRunning: PropTypes.bool,
+  isFinished: PropTypes.bool,
+});
+
 Task.propTypes = {
-  task: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    expectedDuration: PropTypes.number,
-    isRunning: PropTypes.bool,
-    isFinished: PropTypes.bool,
-  }).isRequired,
+  task: taskShape.isRequired,
   onStart: PropTypes.func,
 };
 

@@ -14,8 +14,25 @@ export default function tasksReducer(state = initialState, action) {
 
       return newState;
     }
-    case START_TASK:
-      return state;
+    case START_TASK: {
+      const newTasksList = state.tasks.map((item) => {
+        if (item.id !== action.payload.id) {
+          return item;
+        }
+
+        return {
+          ...item,
+          ...action.payload,
+        };
+      });
+
+      const newState = {
+        ...state,
+        tasks: newTasksList,
+      };
+
+      return newState;
+    }
     default:
       return state;
   }

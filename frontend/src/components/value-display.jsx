@@ -28,7 +28,10 @@ const ValueDisplay = ({ labelText, value, valueAlignment }) => (
 
 ValueDisplay.propTypes = {
   labelText: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]).isRequired,
   valueAlignment: PropTypes.string,
 };
 
